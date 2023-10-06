@@ -79,52 +79,7 @@ void s_multi_loop::compute_energy_WM (int j)
           {
             WM[ij] = tmp;
           }
-        tmp = V->get_energy(i+1,j) +
-                  AU_penalty (sequence[i+1], sequence[j]) +
-                  dangle_bot [sequence[j]]
-                             [sequence[i+1]]
-                             [sequence[i]] +
-                  misc.multi_helix_penalty +
-                  misc.multi_free_base_penalty;
-        // add the loss
-        if (pred_pairings != NULL)
-        {
-            pred_pairings[i] = -1;
-            tmp = tmp - loss (i,i);
-        }
-        if (tmp < WM[ij])
-        {
-            WM[ij] = tmp;
-        }
-
-        tmp = V->get_energy(i,j-1) +
-                  AU_penalty (sequence[i], sequence[j-1]) +
-                  dangle_top [sequence [j-1]]
-                             [sequence [i]]
-                             [sequence [j]] +
-                  misc.multi_helix_penalty +
-                  misc.multi_free_base_penalty;
-        // add the loss
-        if (pred_pairings != NULL)
-        {
-            pred_pairings[j] = -1;
-            tmp = tmp - loss (j,j);
-        }
-        if (tmp < WM[ij])
-        {
-            WM[ij] = tmp;
-        }
-
-        tmp = V->get_energy(i+1,j-1) +
-                  AU_penalty (sequence[i+1], sequence[j-1]) +
-                  dangle_bot [sequence[j-1]]
-                             [sequence[i+1]]
-                             [sequence[i]] +
-                  dangle_top [sequence [j-1]]
-                             [sequence [i+1]]
-                             [sequence [j]] +
-                  misc.multi_helix_penalty +
-                  2*misc.multi_free_base_penalty;
+        
         // add the loss
         if (pred_pairings != NULL)
         {
@@ -197,11 +152,6 @@ PARAMTYPE s_multi_loop::compute_energy (int i, int j)
         if (tmp < min)
             min = tmp;
 
-        tmp = WM[iplus2k] + WM[kplus1jminus1] +
-              dangle_top [sequence [i]]
-              [sequence [j]]
-              [sequence [i+1]] +
-              misc.multi_free_base_penalty;
         // add the loss
         if (pred_pairings != NULL)
         {
@@ -211,37 +161,6 @@ PARAMTYPE s_multi_loop::compute_energy (int i, int j)
         if (tmp < min)
             min = tmp;
 
-        tmp = WM[iplus1k] + WM[kplus1jminus2] +
-              dangle_bot [sequence[i]]
-              [sequence[j]]
-              [sequence[j-1]] +
-              misc.multi_free_base_penalty;
-        // add the loss
-        if (pred_pairings != NULL)
-        {
-            pred_pairings[j-1] = -1;
-            tmp = tmp - loss (j-1,j-1);
-        }
-        if (tmp < min)
-            min = tmp;
-
-        tmp = WM[iplus2k] + WM[kplus1jminus2] +
-              dangle_top [sequence [i]]
-              [sequence [j]]
-              [sequence [i+1]] +
-              dangle_bot [sequence[i]]
-              [sequence[j]]
-              [sequence[j-1]] +
-              2 * misc.multi_free_base_penalty;
-        // add the loss
-        if (pred_pairings != NULL)
-        {
-            pred_pairings[i+1] = -1;
-            pred_pairings[j-1] = -1;
-            tmp = tmp - loss (i+1,i+1) - loss (j-1,j-1);
-        }
-        if (tmp < min)
-          min = tmp;
     }
 
     min += misc.multi_helix_penalty + misc.multi_offset +
@@ -269,52 +188,6 @@ void s_multi_loop::compute_energy_WM_restricted (int j, str_features *fres)
             WM[ij] = tmp;
         }
 
-        if (fres[i].pair <= -1)
-        {
-            tmp = V->get_energy(i+1,j) +
-                    AU_penalty (sequence[i+1], sequence[j]) +
-                    dangle_bot [sequence[j]]
-                                [sequence[i+1]]
-                                [sequence[i]] +
-                    misc.multi_helix_penalty +
-                    misc.multi_free_base_penalty;
-            if (tmp < WM[ij])
-            {
-                WM[ij] = tmp;
-            }
-        }
-        if (fres[j].pair <= -1)
-        {
-            tmp = V->get_energy(i,j-1) +
-                    AU_penalty (sequence[i], sequence[j-1]) +
-                    dangle_top [sequence [j-1]]
-                                [sequence [i]]
-                                [sequence [j]] +
-                    misc.multi_helix_penalty +
-                    misc.multi_free_base_penalty;
-            if (tmp < WM[ij])
-            {
-                WM[ij] = tmp;
-            }
-        }
-
-        if (fres[i].pair <= -1 && fres[j].pair <= -1)
-        {
-            tmp = V->get_energy(i+1,j-1) +
-                    AU_penalty (sequence[i+1], sequence[j-1]) +
-                    dangle_bot [sequence[j-1]]
-                                [sequence[i+1]]
-                                [sequence[i]] +
-                    dangle_top [sequence [j-1]]
-                                [sequence [i+1]]
-                                [sequence [j]] +
-                    misc.multi_helix_penalty +
-                    2*misc.multi_free_base_penalty;
-            if (tmp < WM[ij])
-            {
-                    WM[ij] = tmp;
-            }
-        }
 
         if (fres[i].pair <= -1)
         {
@@ -370,39 +243,6 @@ PARAMTYPE s_multi_loop::compute_energy_restricted (int i, int j, str_features *f
         if (tmp < min)
             min = tmp;
 
-        if (fres[i+1].pair <= -1)
-        {
-            tmp = WM[iplus2k] + WM[kplus1jminus1] +
-                dangle_top [sequence [i]]
-                [sequence [j]]
-                [sequence [i+1]] +
-                misc.multi_free_base_penalty;
-            if (tmp < min)
-                min = tmp;
-        }
-        if (fres[j-1].pair <= -1)
-        {
-            tmp = WM[iplus1k] + WM[kplus1jminus2] +
-                dangle_bot [sequence[i]]
-                [sequence[j]]
-                [sequence[j-1]] +
-                misc.multi_free_base_penalty;
-            if (tmp < min)
-                min = tmp;
-        }
-        if (fres[i+1].pair <= -1 && fres[j-1].pair <= -1)
-        {
-            tmp = WM[iplus2k] + WM[kplus1jminus2] +
-                dangle_top [sequence [i]]
-                [sequence [j]]
-                [sequence [i+1]] +
-                dangle_bot [sequence[i]]
-                [sequence[j]]
-                [sequence[j-1]] +
-                2 * misc.multi_free_base_penalty;
-            if (tmp < min)
-            min = tmp;
-        }
     }
 
     min += misc.multi_helix_penalty + misc.multi_offset +
