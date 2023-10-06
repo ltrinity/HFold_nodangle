@@ -55,40 +55,6 @@ void VM_final::compute_energy(int i, int j, str_features *fres){
         tmp = WM[iplus1k] + WM[kplus1jminus1];
         if (tmp < min)
             min = tmp;
-
-        if (fres[i+1].pair <= -1)
-        {
-            tmp = WM[iplus2k] + WM[kplus1jminus1] +
-                dangle_top [sequence [i]]
-                [sequence [j]]
-                [sequence [i+1]] +
-                misc.multi_free_base_penalty;
-            if (tmp < min)
-                min = tmp;
-        }
-        if (fres[j-1].pair <= -1)
-        {
-            tmp = WM[iplus1k] + WM[kplus1jminus2] +
-                dangle_bot [sequence[i]]
-                [sequence[j]]
-                [sequence[j-1]] +
-                misc.multi_free_base_penalty;
-            if (tmp < min)
-                min = tmp;
-        }
-        if (fres[i+1].pair <= -1 && fres[j-1].pair <= -1)
-        {
-            tmp = WM[iplus2k] + WM[kplus1jminus2] +
-                dangle_top [sequence [i]]
-                [sequence [j]]
-                [sequence [i+1]] +
-                dangle_bot [sequence[i]]
-                [sequence[j]]
-                [sequence[j-1]] +
-                2 * misc.multi_free_base_penalty;
-            if (tmp < min)
-            min = tmp;
-        }
     }
 
     min += misc.multi_helix_penalty + misc.multi_offset +
